@@ -71,8 +71,7 @@ if ($result==1)
 
 		if(empty($msg))
 		{
-			  $query = "SELECT mf_id,model,qty FROM car_stock where del='0' and mf_id='$mf_id' and model='$model'";
-             $data = $crud->getData($query);
+			  
 
              $data=$crud->Check_existing_data('car_stock','mf_id,model,qty',array('del'=> 0,"mf_id"=>$mf_id,'model'=>$model));
 
