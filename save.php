@@ -1,10 +1,13 @@
 <?php
-/*echo "<pre>"; 
-print_r($_REQUEST);*/
+echo "<pre>"; 
+print_r($_REQUEST);
 
 
 require_once(dirname(dirname(__FILE__)).'\Carinventory\configuration.php');
 require_once(dirname(dirname(__FILE__)).'\Carinventory\validate.php');
+require_once(dirname(dirname(__FILE__)).'\Carinventory\upload.php');
+ini_set('display_errors', 1);
+error_reporting(E_ERROR | E_PARSE);
 
 
 
@@ -21,16 +24,19 @@ if(isset($_REQUEST['type']))
 		
 		$msg =$validation->check_empty($_POST, array('manufacturer'));
        $manufacturer=$crud->escape_string($_REQUEST['manufacturer']);
-           $query = "SELECT manufacturer FROM car_master where del='0' and manufacturer ='$manufacturer'";
-
-             $data_check = $crud->getData($query);
+          
 
 
+
+$data_check=$crud->Check_existing_data('car_master','manufacturer',array('manufacturer'=> $manufacturer)); // method parameters the tablename,columns  and  column=>values passed in where clause
              
-	  
+
+/*print_r($data_check);*/
 
 
-		if(empty($msg)&&count($data_check)==0 )
+
+
+		if(empty($msg) && $data_check[0]['manufacturer']!=$manufacturer)
 		{
 
         
@@ -68,12 +74,9 @@ if ($result==1)
 			  $query = "SELECT mf_id,model,qty FROM car_stock where del='0' and mf_id='$mf_id' and model='$model'";
              $data = $crud->getData($query);
 
+             $data=$crud->Check_existing_data('car_stock','mf_id,model,qty',array('del'=> 0,"mf_id"=>$mf_id,'model'=>$model));
 
-             foreach ($data as $key=>$res) {
-               $qty = $res['qty'];
-
-                }
-
+/**/
 
                   
                   if(count($data)==0)
@@ -84,8 +87,8 @@ if ($result==1)
                   }
                   else {
                   	# code...
-                  	$qty=$qty+1;
-                  	 $query = "update car_stock set  qty='$qty'  where mf_id='$mf_id' and model='$model'  ";
+                  	$qty=$data[0]['qty']+1;
+                   $query = "update car_stock set  qty='$qty'  where mf_id='$mf_id' and model='$model'  ";
                     $result = $crud->execute($query);
 
                     echo '<div class="alert alert-success">Record Upated </div>';
