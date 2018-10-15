@@ -1,6 +1,6 @@
 <?php
-echo "<pre>"; 
-print_r($_REQUEST);
+/*echo "<pre>"; 
+print_r($_REQUEST);*/
 
 
 require_once(dirname(dirname(__FILE__)).'\Carinventory\configuration.php');
