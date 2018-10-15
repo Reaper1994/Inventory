@@ -73,11 +73,56 @@ class Crud extends DbConfig
         return $this->connection->real_escape_string($value);
     }
 
+      public function Check_existing_data($set_table_name,$column,$values){
+
+    $row = array();
+
+$condition="";
+
+if(is_array($values)){
+    foreach ($values as $key => $val) {
+        # code...
+
+        $condition.=" ".$key."='".$val."' and  ";
+    }
+}
+else
+{
+    return 'invalid parameters';
+}
+
+
+   $condition= substr(trim($condition), 0, -3);
+   $result = $this->connection->query("SELECT ".$column." FROM ".$set_table_name." where del=0 and ". $condition);
+       //$qur="SELECT ".$column." FROM ".$set_table_name." where ". $condition; 
+       //return $qur;
+        if ($result == false) {
+            return die("query failed");
+
+        } 
+        
+        $rows = array();
+        
+        while ($row = $result->fetch_assoc()) {
+
+            $rows[] = $row;
+        }
+
+ return $rows;
+    
+}
+
   
 
 }
 
 $crud=new Crud;
+
+
+
+
+
+
 
 
 
